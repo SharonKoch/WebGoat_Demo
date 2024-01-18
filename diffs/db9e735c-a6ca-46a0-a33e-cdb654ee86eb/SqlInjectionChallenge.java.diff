@@ -58,6 +58,8 @@
      @PutMapping("/SqlInjectionAdvanced/challenge")
      //assignment path is bounded to class so we use different http method :-)
      @ResponseBody
+@@ -56,0 +57,1 @@
++
      public AttackResult registerNewUser(@RequestParam String username_reg, @RequestParam String email_reg, @RequestParam String password_reg) throws Exception {
          AttackResult attackResult = checkArguments(username_reg, email_reg, password_reg);
  
@@ -65,7 +67,7 @@
  
  
              try (Connection connection = dataSource.getConnection()) {
-@@ -63,3 +64,4 @@
+@@ -63,3 +65,4 @@
 -                String checkUserQuery = "select userid from sql_challenge_users where userid = '" + username_reg + "'";
 -                Statement statement = connection.createStatement();
 -                ResultSet resultSet = statement.executeQuery(checkUserQuery);
@@ -78,14 +80,13 @@
                      if (username_reg.contains("tom'")) {
                          attackResult = success(this).feedback("user.exists").build();
                      } else {
-@@ -71,0 +73,2 @@
-+
-+
                          attackResult = failed(this).feedback("user.exists").feedbackArgs(username_reg).build();
                      }
                  } else {
                      PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO sql_challenge_users VALUES (?, ?, ?)");
                      preparedStatement.setString(1, username_reg);
+@@ -76,0 +79,1 @@
++
                      preparedStatement.setString(2, email_reg);
                      preparedStatement.setString(3, password_reg);
                      preparedStatement.execute();
