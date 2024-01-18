@@ -59,39 +59,31 @@
      @ResponseBody
      public AttackResult completed(@RequestParam String name, @RequestParam String auth_tan) {
          return injectableQueryIntegrity(name, auth_tan);
-@@ -57,0 +58,1 @@
-+
      }
  
-     protected AttackResult injectableQueryIntegrity(String name, String auth_tan) {
-         StringBuffer output = new StringBuffer();
-@@ -61,1 +63,1 @@
+@@ -59,15 +60,4 @@
+-    protected AttackResult injectableQueryIntegrity(String name, String auth_tan) {
+-        StringBuffer output = new StringBuffer();
 -        String query = "SELECT * FROM employees WHERE last_name = '" + name + "' AND auth_tan = '" + auth_tan + "'";
-+        String query = "SELECT * FROM employees WHERE last_name = ? AND auth_tan = ?";
-         try (Connection connection = dataSource.getConnection()) {
-             try {
-@@ -64,1 +66,3 @@
+-        try (Connection connection = dataSource.getConnection()) {
+-            try {
 -                Statement statement = connection.createStatement(TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
-+                PreparedStatement preparedStatement = connection.prepareStatement(query);
-+                preparedStatement.setString(1, name);
-+                preparedStatement.setString(2, auth_tan);
-                 SqlInjectionLesson8.log(connection, query);
-@@ -66,1 +70,1 @@
+-                SqlInjectionLesson8.log(connection, query);
 -                ResultSet results = statement.executeQuery(query);
-+                ResultSet results = preparedStatement.executeQuery();
-                 var test = results.getRow() != 0;
-                 if (results.getStatement() != null) {
-                     if (results.first()) {
-                         output.append(SqlInjectionLesson8.generateTable(results));
-                     } else {
-                         // no results
-                         return failed(this).feedback("sql-injection.8.no.results").build();
+-                var test = results.getRow() != 0;
+-                if (results.getStatement() != null) {
+-                    if (results.first()) {
+-                        output.append(SqlInjectionLesson8.generateTable(results));
+-                    } else {
+-                        // no results
+-                        return failed(this).feedback("sql-injection.8.no.results").build();
++
++PreparedStatement preparedStatement = connection.prepareStatement(query);
++ResultSet results = preparedStatement.executeQuery();
++
                      }
                  }
              } catch (SQLException e) {
-@@ -77,0 +81,2 @@
-+
-+
                  System.err.println(e.getMessage());
                  return failed(this).output("<br><span class='feedback-negative'>" + e.getMessage() + "</span>").build();
              }
