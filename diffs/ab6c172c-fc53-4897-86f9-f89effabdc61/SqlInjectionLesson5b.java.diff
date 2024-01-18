@@ -66,33 +66,32 @@
              try {
                  count = Integer.parseInt(login_count);
              } catch (Exception e) {
-                 return failed(this).output("Could not parse: " + login_count + " to a number"
-                         + "<br> Your query was: " + queryString.replace("?", login_count)).build();
-             }
+@@ -64,3 +65,0 @@
+-                return failed(this).output("Could not parse: " + login_count + " to a number"
+-                        + "<br> Your query was: " + queryString.replace("?", login_count)).build();
+-            }
  
-             query.setInt(1, count);
-@@ -69,3 +70,6 @@
+@@ -68,4 +66,6 @@
+-            query.setInt(1, count);
 -            //String query = "SELECT * FROM user_data WHERE Login_Count = " + login_count + " and userid = " + accountName, ;
 -            try {
 -                ResultSet results = query.executeQuery();
-+            PreparedStatement preparedStatement = connection.prepareStatement(
-+                "SELECT * FROM user_data WHERE Login_Count = ? and userid = ?"
-+            );
-+            preparedStatement.setInt(1, count);
-+            preparedStatement.setString(2, accountName);
-+            ResultSet results = preparedStatement.executeQuery();
++PreparedStatement preparedStatement = connection.prepareStatement(
++    "SELECT * FROM employees WHERE first_name = ? AND last_name = ?"
++);
++preparedStatement.setString(1, firstName);
++preparedStatement.setString(2, lastName);
++ResultSet results = preparedStatement.executeQuery();
  
-@@ -73,3 +77,3 @@
+@@ -73,3 +73,0 @@
 -                if ((results != null) && (results.first() == true)) {
 -                    ResultSetMetaData resultsMetaData = results.getMetaData();
 -                    StringBuffer output = new StringBuffer();
-+            if ((results != null) && (results.first() == true)) {
-+                ResultSetMetaData resultsMetaData = results.getMetaData();
-+                StringBuffer output = new StringBuffer();
  
-                     output.append(SqlInjectionLesson5a.writeTable(results, resultsMetaData));
-                     results.last();
- 
+@@ -77,3 +74,0 @@
+-                    output.append(SqlInjectionLesson5a.writeTable(results, resultsMetaData));
+-                    results.last();
+-
                      // If they get back more than one user they succeeded
                      if (results.getRow() >= 6) {
                          return success(this).feedback("sql-injection.5b.success").output("Your query was: " + queryString.replace("?", login_count)).feedbackArgs(output.toString()).build();
