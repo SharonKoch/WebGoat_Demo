@@ -60,33 +60,26 @@
      @ResponseBody
      public AttackResult completed(@RequestParam String query) {
          return injectableQuery(query);
-     }
+@@ -58,1 +59,0 @@
+-    }
  
-     protected AttackResult injectableQuery(String query) {
-@@ -61,0 +62,1 @@
-+
-         try (Connection connection = dataSource.getConnection()) {
-@@ -62,5 +64,6 @@
+@@ -60,13 +60,3 @@
+-    protected AttackResult injectableQuery(String query) {
+-        try (Connection connection = dataSource.getConnection()) {
 -            try (Statement statement = connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY)) {
 -                Statement checkStatement = connection.createStatement(TYPE_SCROLL_INSENSITIVE,
 -                        CONCUR_READ_ONLY);
 -                statement.executeUpdate(query);
 -                ResultSet results = checkStatement.executeQuery("SELECT * FROM employees WHERE last_name='Barnett';");
-+            try (PreparedStatement preparedStatement = connection.prepareStatement(
-+                "UPDATE employees SET department = ? WHERE last_name = 'Barnett'"
-+            )) {
-+                preparedStatement.setString(1, "Sales");
-+                preparedStatement.executeUpdate();
-+                ResultSet results = preparedStatement.executeQuery("SELECT * FROM employees WHERE last_name='Barnett';");
-                 StringBuffer output = new StringBuffer();
-                 // user completes lesson if the department of Tobi Barnett now is 'Sales'
-                 results.first();
-                 if (results.getString("department").equals("Sales")) {
-@@ -71,0 +74,2 @@
+-                StringBuffer output = new StringBuffer();
+-                // user completes lesson if the department of Tobi Barnett now is 'Sales'
+-                results.first();
+-                if (results.getString("department").equals("Sales")) {
+-                    output.append("<span class='feedback-positive'>" + query + "</span>");
+-                    output.append(SqlInjectionLesson8.generateTable(results));
++PreparedStatement preparedStatement = connection.prepareStatement(query);
++preparedStatement.executeUpdate();
 +
-+
-                     output.append("<span class='feedback-positive'>" + query + "</span>");
-                     output.append(SqlInjectionLesson8.generateTable(results));
                      return success(this).output(output.toString()).build();
                  } else {
                      return failed(this).output(output.toString()).build();
