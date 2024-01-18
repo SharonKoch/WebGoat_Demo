@@ -39,6 +39,8 @@
  import java.sql.ResultSet;
  import java.sql.SQLException;
  import java.sql.Statement;
+@@ -39,0 +39,1 @@
++import java.sql.PreparedStatement;
  
  
  @RestController
@@ -66,21 +68,26 @@
      @PostMapping("/SqlInjection/attack5")
      @ResponseBody
      public AttackResult completed(String query) {
-         createUser();
-         return injectableQuery(query);
-     }
+@@ -66,3 +67,0 @@
+-        createUser();
+-        return injectableQuery(query);
+-    }
  
-     protected AttackResult injectableQuery(String query) {
-         try (Connection connection = dataSource.getConnection()) {
-             try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
-                 statement.executeQuery(query);
-                 if (checkSolution(connection)) {
-                     return success(this).build();
-                 }
-                 return failed(this).output("Your query was: " + query).build();
-             }
-         } catch (Exception e) {
-             return failed(this).output(this.getClass().getName() + " : " + e.getMessage() + "<br> Your query was: " + query).build();
+@@ -70,11 +68,3 @@
+-    protected AttackResult injectableQuery(String query) {
+-        try (Connection connection = dataSource.getConnection()) {
+-            try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+-                statement.executeQuery(query);
+-                if (checkSolution(connection)) {
+-                    return success(this).build();
+-                }
+-                return failed(this).output("Your query was: " + query).build();
+-            }
+-        } catch (Exception e) {
+-            return failed(this).output(this.getClass().getName() + " : " + e.getMessage() + "<br> Your query was: " + query).build();
++PreparedStatement preparedStatement = connection.prepareStatement(query);
++ResultSet resultSet = preparedStatement.executeQuery();
++
          }
      }
  
