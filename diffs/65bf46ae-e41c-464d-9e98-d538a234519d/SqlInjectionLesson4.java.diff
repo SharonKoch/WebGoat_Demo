@@ -42,6 +42,8 @@
  
  import static java.sql.ResultSet.CONCUR_READ_ONLY;
  import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
+@@ -42,0 +42,1 @@
++import java.sql.PreparedStatement;
  
  
  @RestController
@@ -56,21 +58,26 @@
  
      @PostMapping("/SqlInjection/attack4")
      @ResponseBody
-     public AttackResult completed(@RequestParam String query) {
-         return injectableQuery(query);
-     }
+@@ -56,3 +57,0 @@
+-    public AttackResult completed(@RequestParam String query) {
+-        return injectableQuery(query);
+-    }
  
-     protected AttackResult injectableQuery(String query) {
-         try (Connection connection = dataSource.getConnection()) {
-             try (Statement statement = connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY)) {
-                 statement.executeUpdate(query);
-                 connection.commit();
-                 ResultSet results = statement.executeQuery("SELECT phone from employees;");
-                 StringBuffer output = new StringBuffer();
-                 // user completes lesson if column phone exists
-                 if (results.first()) {
-                     output.append("<span class='feedback-positive'>" + query + "</span>");
-                     return success(this).output(output.toString()).build();
+@@ -60,11 +58,3 @@
+-    protected AttackResult injectableQuery(String query) {
+-        try (Connection connection = dataSource.getConnection()) {
+-            try (Statement statement = connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY)) {
+-                statement.executeUpdate(query);
+-                connection.commit();
+-                ResultSet results = statement.executeQuery("SELECT phone from employees;");
+-                StringBuffer output = new StringBuffer();
+-                // user completes lesson if column phone exists
+-                if (results.first()) {
+-                    output.append("<span class='feedback-positive'>" + query + "</span>");
+-                    return success(this).output(output.toString()).build();
++PreparedStatement preparedStatement = connection.prepareStatement(query);
++preparedStatement.executeUpdate();
++
                  } else {
                      return failed(this).output(output.toString()).build();
                  }
