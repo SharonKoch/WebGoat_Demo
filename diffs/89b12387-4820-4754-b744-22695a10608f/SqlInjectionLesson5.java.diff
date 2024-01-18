@@ -39,8 +39,6 @@
  import java.sql.ResultSet;
  import java.sql.SQLException;
  import java.sql.Statement;
-@@ -39,0 +39,1 @@
-+import java.sql.PreparedStatement;
  
  
  @RestController
@@ -74,19 +72,13 @@
  
      protected AttackResult injectableQuery(String query) {
          try (Connection connection = dataSource.getConnection()) {
-@@ -72,2 +73,2 @@
--            try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
--                statement.executeQuery(query);
-+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-+                preparedStatement.executeQuery();
+             try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+                 statement.executeQuery(query);
                  if (checkSolution(connection)) {
                      return success(this).build();
                  }
                  return failed(this).output("Your query was: " + query).build();
              }
-@@ -79,0 +80,2 @@
-+
-+
          } catch (Exception e) {
              return failed(this).output(this.getClass().getName() + " : " + e.getMessage() + "<br> Your query was: " + query).build();
          }
