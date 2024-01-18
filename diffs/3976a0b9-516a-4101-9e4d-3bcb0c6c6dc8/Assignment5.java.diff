@@ -50,13 +50,13 @@
      }
  
      @PostMapping("/challenge/5")
+@@ -50,0 +50,1 @@
++
      @ResponseBody
      public AttackResult login(@RequestParam String username_login, @RequestParam String password_login) throws Exception {
          if (!StringUtils.hasText(username_login) || !StringUtils.hasText(password_login)) {
              return failed(this).feedback("required4").build();
          }
-@@ -55,0 +55,1 @@
-+
          if (!"Larry".equals(username_login)) {
              return failed(this).feedback("user.not.larry").feedbackArgs(username_login).build();
          }
@@ -73,11 +73,9 @@
              if (resultSet.next()) {
                  return success(this).feedback("challenge.solved").feedbackArgs(Flag.FLAGS.get(5)).build();
              } else {
-@@ -65,0 +70,2 @@
-+
-+
                  return failed(this).feedback("challenge.close").build();
              }
          }
      }
- }
+@@ -69,1 +74,0 @@
+-}
