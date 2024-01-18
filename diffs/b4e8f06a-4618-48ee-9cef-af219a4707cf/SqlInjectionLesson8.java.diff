@@ -61,21 +61,26 @@
      }
  
      protected AttackResult injectableQueryConfidentiality(String name, String auth_tan) {
-         StringBuffer output = new StringBuffer();
-         String query = "SELECT * FROM employees WHERE last_name = '" + name + "' AND auth_tan = '" + auth_tan + "'";
+@@ -59,2 +60,0 @@
+-        StringBuffer output = new StringBuffer();
+-        String query = "SELECT * FROM employees WHERE last_name = '" + name + "' AND auth_tan = '" + auth_tan + "'";
  
-         try (Connection connection = dataSource.getConnection()) {
-             try {
-                 Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-                 log(connection, query);
-                 ResultSet results = statement.executeQuery(query);
+@@ -62,5 +61,2 @@
+-        try (Connection connection = dataSource.getConnection()) {
+-            try {
+-                Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+-                log(connection, query);
+-                ResultSet results = statement.executeQuery(query);
++PreparedStatement preparedStatement = connection.prepareStatement(query);
++ResultSet results = preparedStatement.executeQuery();
  
-                 if (results.getStatement() != null) {
-                     if (results.first()) {
-                         output.append(generateTable(results));
-                         results.last();
- 
-                         if (results.getRow() > 1) {
+@@ -68,6 +64,0 @@
+-                if (results.getStatement() != null) {
+-                    if (results.first()) {
+-                        output.append(generateTable(results));
+-                        results.last();
+-
+-                        if (results.getRow() > 1) {
                              // more than one record, the user succeeded
                              return success(this).feedback("sql-injection.8.success").output(output.toString()).build();
                          } else {
@@ -131,25 +136,16 @@
      }
  
      public static void log(Connection connection, String action) {
-@@ -129,0 +130,1 @@
-+
          action = action.replace('\'', '"');
          Calendar cal = Calendar.getInstance();
          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
          String time = sdf.format(cal.getTime());
  
-@@ -134,1 +136,1 @@
--        String logQuery = "INSERT INTO access_log (time, action) VALUES ('" + time + "', '" + action + "')";
-+        String logQuery = "INSERT INTO access_log (time, action) VALUES (?, ?)";
+         String logQuery = "INSERT INTO access_log (time, action) VALUES ('" + time + "', '" + action + "')";
  
          try {
-@@ -137,2 +139,4 @@
--            Statement statement = connection.createStatement(TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
--            statement.executeUpdate(logQuery);
-+            PreparedStatement preparedStatement = connection.prepareStatement(logQuery);
-+            preparedStatement.setString(1, time);
-+            preparedStatement.setString(2, action);
-+            preparedStatement.executeUpdate();
+             Statement statement = connection.createStatement(TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
+             statement.executeUpdate(logQuery);
          } catch (SQLException e) {
              System.err.println(e.getMessage());
          }
