@@ -57,28 +57,32 @@
      @ResponseBody
      public AttackResult completed(@RequestParam String account, @RequestParam String operator, @RequestParam String injection) {
          return injectableQuery(account + " " + operator + " " + injection);
-@@ -55,1 +56,0 @@
--    }
+@@ -55,0 +56,1 @@
++
+     }
  
-@@ -57,6 +57,2 @@
--    protected AttackResult injectableQuery(String accountName) {
--        String query = "";
--        try (Connection connection = dataSource.getConnection()) {
+     protected AttackResult injectableQuery(String accountName) {
+         String query = "";
+         try (Connection connection = dataSource.getConnection()) {
+@@ -60,3 +62,4 @@
 -            query = "SELECT * FROM user_data WHERE first_name = 'John' and last_name = '" + accountName + "'";
 -            try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
 -                ResultSet results = statement.executeQuery(query);
-+PreparedStatement preparedStatement = connection.prepareStatement(query);
-+ResultSet results = preparedStatement.executeQuery();
++            query = "SELECT * FROM user_data WHERE first_name = 'John' and last_name = ?";
++            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
++                preparedStatement.setString(1, accountName);
++                ResultSet results = preparedStatement.executeQuery();
  
-@@ -64,3 +60,0 @@
--                if ((results != null) && (results.first())) {
--                    ResultSetMetaData resultsMetaData = results.getMetaData();
--                    StringBuilder output = new StringBuilder();
+                 if ((results != null) && (results.first())) {
+                     ResultSetMetaData resultsMetaData = results.getMetaData();
+                     StringBuilder output = new StringBuilder();
  
-@@ -68,3 +61,0 @@
--                    output.append(writeTable(results, resultsMetaData));
--                    results.last();
--
+                     output.append(writeTable(results, resultsMetaData));
+                     results.last();
+ 
+@@ -71,0 +74,2 @@
++
++
                      // If they get back more than one user they succeeded
                      if (results.getRow() >= 6) {
                          return success(this).feedback("sql-injection.5a.success").output("Your query was: " + query + EXPLANATION).feedbackArgs(output.toString()).build();
