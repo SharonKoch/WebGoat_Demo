@@ -58,26 +58,32 @@
          return injectableQueryAvailability(action_string);
      }
  
-@@ -56,3 +57,0 @@
--    protected AttackResult injectableQueryAvailability(String action) {
--        StringBuffer output = new StringBuffer();
+@@ -56,0 +57,1 @@
++
+     protected AttackResult injectableQueryAvailability(String action) {
+         StringBuffer output = new StringBuffer();
+@@ -58,1 +60,1 @@
 -        String query = "SELECT * FROM access_log WHERE action LIKE '%" + action + "%'";
++        String query = "SELECT * FROM access_log WHERE action LIKE ?";
  
-@@ -60,4 +58,2 @@
--        try (Connection connection = dataSource.getConnection()) {
--            try {
+         try (Connection connection = dataSource.getConnection()) {
+             try {
+@@ -62,2 +64,3 @@
 -                Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 -                ResultSet results = statement.executeQuery(query);
-+PreparedStatement preparedStatement = connection.prepareStatement(query);
-+ResultSet results = preparedStatement.executeQuery();
++                PreparedStatement preparedStatement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
++                preparedStatement.setString(1, "%" + action + "%");
++                ResultSet results = preparedStatement.executeQuery();
  
-@@ -65,6 +61,0 @@
--                if (results.getStatement() != null) {
--                    results.first();
--                    output.append(SqlInjectionLesson8.generateTable(results));
--                    return failed(this).feedback("sql-injection.10.entries").output(output.toString()).build();
--                } else {
--                    if (tableExists(connection)) {
+                 if (results.getStatement() != null) {
+                     results.first();
+                     output.append(SqlInjectionLesson8.generateTable(results));
+                     return failed(this).feedback("sql-injection.10.entries").output(output.toString()).build();
+                 } else {
+                     if (tableExists(connection)) {
+@@ -71,0 +74,2 @@
++
++
                          return failed(this).feedback("sql-injection.10.entries").output(output.toString()).build();
                      } else {
                          return success(this).feedback("sql-injection.10.success").build();
