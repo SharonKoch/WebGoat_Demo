@@ -55,10 +55,10 @@
  
      @PostMapping("/SqlInjection/assignment5a")
      @ResponseBody
+@@ -53,0 +54,1 @@
++
      public AttackResult completed(@RequestParam String account, @RequestParam String operator, @RequestParam String injection) {
          return injectableQuery(account + " " + operator + " " + injection);
-@@ -55,0 +56,1 @@
-+
      }
  
      protected AttackResult injectableQuery(String accountName) {
@@ -80,11 +80,11 @@
                      output.append(writeTable(results, resultsMetaData));
                      results.last();
  
-@@ -71,0 +74,2 @@
-+
-+
                      // If they get back more than one user they succeeded
                      if (results.getRow() >= 6) {
+@@ -73,0 +76,2 @@
++
++
                          return success(this).feedback("sql-injection.5a.success").output("Your query was: " + query + EXPLANATION).feedbackArgs(output.toString()).build();
                      } else {
                          return failed(this).output(output.toString() + "<br> Your query was: " + query).build();
