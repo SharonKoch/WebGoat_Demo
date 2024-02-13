@@ -56,10 +56,10 @@
      @ResponseBody
      public AttackResult completed(@RequestParam String action_string) {
          return injectableQueryAvailability(action_string);
+@@ -54,0 +55,1 @@
++
      }
  
-@@ -56,0 +57,1 @@
-+
      protected AttackResult injectableQueryAvailability(String action) {
          StringBuffer output = new StringBuffer();
 @@ -58,1 +60,1 @@
@@ -71,7 +71,7 @@
 @@ -62,2 +64,3 @@
 -                Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 -                ResultSet results = statement.executeQuery(query);
-+                PreparedStatement preparedStatement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
++                PreparedStatement preparedStatement = connection.prepareStatement(query);
 +                preparedStatement.setString(1, "%" + action + "%");
 +                ResultSet results = preparedStatement.executeQuery();
  
@@ -81,12 +81,12 @@
                      return failed(this).feedback("sql-injection.10.entries").output(output.toString()).build();
                  } else {
                      if (tableExists(connection)) {
-@@ -71,0 +74,2 @@
-+
-+
                          return failed(this).feedback("sql-injection.10.entries").output(output.toString()).build();
                      } else {
                          return success(this).feedback("sql-injection.10.success").build();
+@@ -74,0 +77,2 @@
++
++
                      }
                  }
              } catch (SQLException e) {
