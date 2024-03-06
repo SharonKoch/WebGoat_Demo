@@ -59,10 +59,10 @@
      @ResponseBody
      public AttackResult completed(@RequestParam String name, @RequestParam String auth_tan) {
          return injectableQueryIntegrity(name, auth_tan);
-@@ -57,0 +58,1 @@
-+
      }
  
+@@ -59,0 +60,1 @@
++
      protected AttackResult injectableQueryIntegrity(String name, String auth_tan) {
          StringBuffer output = new StringBuffer();
 @@ -61,1 +63,1 @@
@@ -86,12 +86,12 @@
                      } else {
                          // no results
                          return failed(this).feedback("sql-injection.8.no.results").build();
+@@ -74,0 +78,2 @@
++
++
                      }
                  }
              } catch (SQLException e) {
-@@ -77,0 +81,2 @@
-+
-+
                  System.err.println(e.getMessage());
                  return failed(this).output("<br><span class='feedback-negative'>" + e.getMessage() + "</span>").build();
              }
