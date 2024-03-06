@@ -50,10 +50,10 @@
      }
  
      @PostMapping("/challenge/5")
-@@ -50,0 +50,1 @@
-+
      @ResponseBody
      public AttackResult login(@RequestParam String username_login, @RequestParam String password_login) throws Exception {
+@@ -52,0 +52,1 @@
++
          if (!StringUtils.hasText(username_login) || !StringUtils.hasText(password_login)) {
              return failed(this).feedback("required4").build();
          }
@@ -75,7 +75,8 @@
              } else {
                  return failed(this).feedback("challenge.close").build();
              }
+@@ -67,0 +72,1 @@
++
          }
      }
-@@ -69,1 +74,0 @@
--}
+ }
