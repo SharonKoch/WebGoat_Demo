@@ -63,10 +63,9 @@
  
          if (attackResult == null) {
  
-@@ -61,1 +62,0 @@
--
+ 
              try (Connection connection = dataSource.getConnection()) {
-@@ -63,3 +63,4 @@
+@@ -63,3 +64,4 @@
 -                String checkUserQuery = "select userid from sql_challenge_users where userid = '" + username_reg + "'";
 -                Statement statement = connection.createStatement();
 -                ResultSet resultSet = statement.executeQuery(checkUserQuery);
@@ -79,10 +78,11 @@
                      if (username_reg.contains("tom'")) {
                          attackResult = success(this).feedback("user.exists").build();
                      } else {
+@@ -71,0 +73,2 @@
++
++
                          attackResult = failed(this).feedback("user.exists").feedbackArgs(username_reg).build();
                      }
-@@ -73,0 +74,1 @@
-+
                  } else {
                      PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO sql_challenge_users VALUES (?, ?, ?)");
                      preparedStatement.setString(1, username_reg);
