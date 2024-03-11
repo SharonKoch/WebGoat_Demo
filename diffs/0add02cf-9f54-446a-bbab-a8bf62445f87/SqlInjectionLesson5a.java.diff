@@ -57,11 +57,11 @@
      @ResponseBody
      public AttackResult completed(@RequestParam String account, @RequestParam String operator, @RequestParam String injection) {
          return injectableQuery(account + " " + operator + " " + injection);
-@@ -55,0 +56,1 @@
-+
      }
  
      protected AttackResult injectableQuery(String accountName) {
+@@ -58,0 +59,1 @@
++
          String query = "";
          try (Connection connection = dataSource.getConnection()) {
 @@ -60,3 +62,4 @@
@@ -77,12 +77,12 @@
                      ResultSetMetaData resultsMetaData = results.getMetaData();
                      StringBuilder output = new StringBuilder();
  
+@@ -68,0 +71,2 @@
++
++
                      output.append(writeTable(results, resultsMetaData));
                      results.last();
  
-@@ -71,0 +74,2 @@
-+
-+
                      // If they get back more than one user they succeeded
                      if (results.getRow() >= 6) {
                          return success(this).feedback("sql-injection.5a.success").output("Your query was: " + query + EXPLANATION).feedbackArgs(output.toString()).build();
