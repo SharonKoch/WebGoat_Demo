@@ -64,17 +64,26 @@
          StringBuffer output = new StringBuffer();
          String query = "SELECT * FROM employees WHERE last_name = '" + name + "' AND auth_tan = '" + auth_tan + "'";
  
+@@ -62,0 +63,1 @@
++
          try (Connection connection = dataSource.getConnection()) {
              try {
-                 Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+@@ -64,1 +66,1 @@
+-                Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
++                PreparedStatement preparedStatement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
                  log(connection, query);
-                 ResultSet results = statement.executeQuery(query);
+@@ -66,1 +68,1 @@
+-                ResultSet results = statement.executeQuery(query);
++                ResultSet results = preparedStatement.executeQuery();
  
                  if (results.getStatement() != null) {
                      if (results.first()) {
                          output.append(generateTable(results));
                          results.last();
  
+@@ -73,0 +75,2 @@
++
++
                          if (results.getRow() > 1) {
                              // more than one record, the user succeeded
                              return success(this).feedback("sql-injection.8.success").output(output.toString()).build();
@@ -133,24 +142,14 @@
      public static void log(Connection connection, String action) {
          action = action.replace('\'', '"');
          Calendar cal = Calendar.getInstance();
-@@ -131,0 +132,1 @@
-+
          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
          String time = sdf.format(cal.getTime());
  
-@@ -134,1 +136,5 @@
--        String logQuery = "INSERT INTO access_log (time, action) VALUES ('" + time + "', '" + action + "')";
-+        PreparedStatement preparedStatement = connection.prepareStatement(
-+            "INSERT INTO access_log (time, action) VALUES (?, ?)"
-+        );
-+        preparedStatement.setString(1, time);
-+        preparedStatement.setString(2, action);
+         String logQuery = "INSERT INTO access_log (time, action) VALUES ('" + time + "', '" + action + "')";
  
          try {
-@@ -137,2 +143,1 @@
--            Statement statement = connection.createStatement(TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
--            statement.executeUpdate(logQuery);
-+            preparedStatement.executeUpdate();
+             Statement statement = connection.createStatement(TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
+             statement.executeUpdate(logQuery);
          } catch (SQLException e) {
              System.err.println(e.getMessage());
          }
