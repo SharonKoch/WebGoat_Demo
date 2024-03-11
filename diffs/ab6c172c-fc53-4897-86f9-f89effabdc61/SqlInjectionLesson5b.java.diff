@@ -37,6 +37,8 @@
  import javax.servlet.http.HttpServletRequest;
  import java.io.IOException;
  import java.sql.*;
+@@ -37,0 +37,1 @@
++import java.sql.PreparedStatement;
  
  
  @RestController
@@ -69,13 +71,24 @@
              }
  
              query.setInt(1, count);
-             //String query = "SELECT * FROM user_data WHERE Login_Count = " + login_count + " and userid = " + accountName, ;
-             try {
-                 ResultSet results = query.executeQuery();
+@@ -69,3 +70,6 @@
+-            //String query = "SELECT * FROM user_data WHERE Login_Count = " + login_count + " and userid = " + accountName, ;
+-            try {
+-                ResultSet results = query.executeQuery();
++            PreparedStatement preparedStatement = connection.prepareStatement(
++                "SELECT * FROM user_data WHERE Login_Count = ? and userid = ?"
++            );
++            preparedStatement.setInt(1, count);
++            preparedStatement.setString(2, accountName);
++            ResultSet results = preparedStatement.executeQuery();
  
-                 if ((results != null) && (results.first() == true)) {
-                     ResultSetMetaData resultsMetaData = results.getMetaData();
-                     StringBuffer output = new StringBuffer();
+@@ -73,3 +77,3 @@
+-                if ((results != null) && (results.first() == true)) {
+-                    ResultSetMetaData resultsMetaData = results.getMetaData();
+-                    StringBuffer output = new StringBuffer();
++            if ((results != null) && (results.first() == true)) {
++                ResultSetMetaData resultsMetaData = results.getMetaData();
++                StringBuffer output = new StringBuffer();
  
                      output.append(SqlInjectionLesson5a.writeTable(results, resultsMetaData));
                      results.last();
