@@ -60,11 +60,9 @@
      }
  
      protected AttackResult injectableQuery(String accountName) {
-@@ -58,0 +59,1 @@
-+
          String query = "";
          try (Connection connection = dataSource.getConnection()) {
-@@ -60,3 +62,4 @@
+@@ -60,3 +61,4 @@
 -            query = "SELECT * FROM user_data WHERE first_name = 'John' and last_name = '" + accountName + "'";
 -            try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
 -                ResultSet results = statement.executeQuery(query);
@@ -77,9 +75,6 @@
                      ResultSetMetaData resultsMetaData = results.getMetaData();
                      StringBuilder output = new StringBuilder();
  
-@@ -68,0 +71,2 @@
-+
-+
                      output.append(writeTable(results, resultsMetaData));
                      results.last();
  
@@ -87,6 +82,9 @@
                      if (results.getRow() >= 6) {
                          return success(this).feedback("sql-injection.5a.success").output("Your query was: " + query + EXPLANATION).feedbackArgs(output.toString()).build();
                      } else {
+@@ -75,0 +77,2 @@
++
++
                          return failed(this).output(output.toString() + "<br> Your query was: " + query).build();
                      }
                  } else {
