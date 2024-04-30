@@ -56,19 +56,29 @@
  
      @PostMapping("/SqlInjection/attack8")
      @ResponseBody
+@@ -54,0 +55,1 @@
++
      public AttackResult completed(@RequestParam String name, @RequestParam String auth_tan) {
          return injectableQueryConfidentiality(name, auth_tan);
      }
  
      protected AttackResult injectableQueryConfidentiality(String name, String auth_tan) {
          StringBuffer output = new StringBuffer();
-         String query = "SELECT * FROM employees WHERE last_name = '" + name + "' AND auth_tan = '" + auth_tan + "'";
+@@ -60,1 +62,1 @@
+-        String query = "SELECT * FROM employees WHERE last_name = '" + name + "' AND auth_tan = '" + auth_tan + "'";
++        String query = "SELECT * FROM employees WHERE last_name = ? AND auth_tan = ?";
  
          try (Connection connection = dataSource.getConnection()) {
              try {
-                 Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+@@ -64,1 +66,3 @@
+-                Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
++                PreparedStatement preparedStatement = connection.prepareStatement(query);
++                preparedStatement.setString(1, name);
++                preparedStatement.setString(2, auth_tan);
                  log(connection, query);
-                 ResultSet results = statement.executeQuery(query);
+@@ -66,1 +70,1 @@
+-                ResultSet results = statement.executeQuery(query);
++                ResultSet results = preparedStatement.executeQuery();
  
                  if (results.getStatement() != null) {
                      if (results.first()) {
@@ -81,6 +91,9 @@
                          } else {
                              // only one record
                              return failed(this).feedback("sql-injection.8.one").output(output.toString()).build();
+@@ -79,0 +83,2 @@
++
++
                          }
  
                      } else {
@@ -136,20 +149,11 @@
          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
          String time = sdf.format(cal.getTime());
  
-@@ -134,1 +135,0 @@
--        String logQuery = "INSERT INTO access_log (time, action) VALUES ('" + time + "', '" + action + "')";
+         String logQuery = "INSERT INTO access_log (time, action) VALUES ('" + time + "', '" + action + "')";
  
-@@ -136,0 +136,2 @@
-+        String logQuery = "INSERT INTO access_log (time, action) VALUES (?, ?)";
-+
          try {
-@@ -137,2 +139,4 @@
--            Statement statement = connection.createStatement(TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
--            statement.executeUpdate(logQuery);
-+            PreparedStatement preparedStatement = connection.prepareStatement(logQuery);
-+            preparedStatement.setString(1, time);
-+            preparedStatement.setString(2, action);
-+            preparedStatement.executeUpdate();
+             Statement statement = connection.createStatement(TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
+             statement.executeUpdate(logQuery);
          } catch (SQLException e) {
              System.err.println(e.getMessage());
          }
