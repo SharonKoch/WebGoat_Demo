@@ -42,8 +42,6 @@
  
  import static org.hsqldb.jdbc.JDBCResultSet.CONCUR_UPDATABLE;
  import static org.hsqldb.jdbc.JDBCResultSet.TYPE_SCROLL_SENSITIVE;
-@@ -42,0 +42,1 @@
-+import java.sql.PreparedStatement;
  
  @RestController
  @AssignmentHints(value = {"SqlStringInjectionHint.9.1", "SqlStringInjectionHint.9.2", "SqlStringInjectionHint.9.3", "SqlStringInjectionHint.9.4", "SqlStringInjectionHint.9.5"})
@@ -64,25 +62,16 @@
      protected AttackResult injectableQueryIntegrity(String name, String auth_tan) {
          StringBuffer output = new StringBuffer();
          String query = "SELECT * FROM employees WHERE last_name = '" + name + "' AND auth_tan = '" + auth_tan + "'";
-@@ -62,0 +63,1 @@
-+
          try (Connection connection = dataSource.getConnection()) {
              try {
-@@ -64,1 +66,1 @@
--                Statement statement = connection.createStatement(TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
-+                PreparedStatement preparedStatement = connection.prepareStatement(query, TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
+                 Statement statement = connection.createStatement(TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
                  SqlInjectionLesson8.log(connection, query);
-@@ -66,1 +68,1 @@
--                ResultSet results = statement.executeQuery(query);
-+                ResultSet results = preparedStatement.executeQuery();
+                 ResultSet results = statement.executeQuery(query);
                  var test = results.getRow() != 0;
                  if (results.getStatement() != null) {
                      if (results.first()) {
                          output.append(SqlInjectionLesson8.generateTable(results));
                      } else {
-@@ -72,0 +74,2 @@
-+
-+
                          // no results
                          return failed(this).feedback("sql-injection.8.no.results").build();
                      }
