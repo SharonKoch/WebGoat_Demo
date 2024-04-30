@@ -62,27 +62,25 @@
          String query = "";
          try (Connection connection = dataSource.getConnection()) {
              boolean usedUnion = true;
-             query = "SELECT * FROM user_data WHERE last_name = '" + accountName + "'";
+@@ -60,1 +61,1 @@
+-            query = "SELECT * FROM user_data WHERE last_name = '" + accountName + "'";
++            query = "SELECT * FROM user_data WHERE last_name = ?";
              //Check if Union is used
              if (!accountName.matches("(?i)(^[^-/*;)]*)(\\s*)UNION(.*$)")) {
-@@ -63,0 +64,1 @@
-+
                  usedUnion = false;
              }
-@@ -65,3 +67,2 @@
+@@ -65,3 +66,3 @@
 -            try (Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
 -                    ResultSet.CONCUR_READ_ONLY)) {
 -                ResultSet results = statement.executeQuery(query);
-+            try (PreparedStatement preparedStatement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
++            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
++                preparedStatement.setString(1, accountName);
 +                ResultSet results = preparedStatement.executeQuery();
  
                  if ((results != null) && (results.first())) {
                      ResultSetMetaData resultsMetaData = results.getMetaData();
                      StringBuffer output = new StringBuffer();
  
-@@ -73,0 +74,2 @@
-+
-+
                      output.append(SqlInjectionLesson5a.writeTable(results, resultsMetaData));
  
                      String appendingWhenSucceded;
@@ -90,6 +88,9 @@
                          appendingWhenSucceded = "Well done! Can you also figure out a solution, by appending a new SQL Statement?";
                      else
                          appendingWhenSucceded = "Well done! Can you also figure out a solution, by using a UNION?";
+@@ -80,0 +81,2 @@
++
++
                      results.last();
  
                      if (output.toString().contains("dave") && output.toString().contains("passW0rD")) {
