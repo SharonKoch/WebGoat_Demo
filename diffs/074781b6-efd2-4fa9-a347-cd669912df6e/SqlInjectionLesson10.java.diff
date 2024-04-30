@@ -53,6 +53,8 @@
      }
  
      @PostMapping("/SqlInjection/attack10")
+@@ -51,0 +52,1 @@
++
      @ResponseBody
      public AttackResult completed(@RequestParam String action_string) {
          return injectableQueryAvailability(action_string);
@@ -60,23 +62,23 @@
  
      protected AttackResult injectableQueryAvailability(String action) {
          StringBuffer output = new StringBuffer();
-         String query = "SELECT * FROM access_log WHERE action LIKE '%" + action + "%'";
+@@ -58,1 +60,1 @@
+-        String query = "SELECT * FROM access_log WHERE action LIKE '%" + action + "%'";
++        String query = "SELECT * FROM access_log WHERE action LIKE ?";
  
          try (Connection connection = dataSource.getConnection()) {
              try {
-@@ -62,2 +63,2 @@
+@@ -62,2 +64,3 @@
 -                Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 -                ResultSet results = statement.executeQuery(query);
-+                PreparedStatement preparedStatement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
++                PreparedStatement preparedStatement = connection.prepareStatement(query);
++                preparedStatement.setString(1, "%" + action + "%");
 +                ResultSet results = preparedStatement.executeQuery();
  
                  if (results.getStatement() != null) {
                      results.first();
                      output.append(SqlInjectionLesson8.generateTable(results));
                      return failed(this).feedback("sql-injection.10.entries").output(output.toString()).build();
-@@ -69,0 +70,2 @@
-+
-+
                  } else {
                      if (tableExists(connection)) {
                          return failed(this).feedback("sql-injection.10.entries").output(output.toString()).build();
@@ -84,6 +86,9 @@
                          return success(this).feedback("sql-injection.10.success").build();
                      }
                  }
+@@ -76,0 +79,2 @@
++
++
              } catch (SQLException e) {
                  if (tableExists(connection)) {
                      return failed(this).output("<span class='feedback-negative'>" + e.getMessage() + "</span><br>" + output.toString()).build();
