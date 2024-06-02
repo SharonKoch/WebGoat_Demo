@@ -85,10 +85,14 @@
                          return failed(this).output(output.toString() + "<br> Your query was: " + query).build();
                      }
                  } else {
-@@ -78,0 +80,1 @@
-+                } else {
                      return failed(this).feedback("sql-injection.5a.no.results").output("Your query was: " + query).build();
                  }
+@@ -80,0 +82,5 @@
++            }
++        } catch (SQLException e) {
++            return failed(this).output("Error executing SQL query: " + query).build();
++        }
++    }
              } catch (SQLException sqle) {
                  return failed(this).output(sqle.getMessage() + "<br> Your query was: " + query).build();
              }
