@@ -1,5 +1,6 @@
 package org.owasp.webgoat.lessons.path_traversal;
 
+import java.nio.file.Paths;
 import lombok.SneakyThrows;
 import org.owasp.webgoat.container.assignments.AssignmentHints;
 import org.owasp.webgoat.container.assignments.AttackResult;
@@ -57,7 +58,12 @@ public class ProfileZipSlip extends ProfileUploadBase {
             Enumeration<? extends ZipEntry> entries = zip.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry e = entries.nextElement();
-                File f = new File(tmpZipDirectory.toFile(), e.getName());
+                  File f = new File(tmpZipDirectory.toFile(), e.getName());
+                  String normalizedPath = f.getCanonicalPath();
+                  if (!normalizedPath.startsWith(tmpZipDirectory.toFile().getCanonicalPath())) {
+                      throw new IOException("Error: Attempt to write file outside of the target directory.");
+                  }
+
                 InputStream is = zip.getInputStream(e);
                 Files.copy(is, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
