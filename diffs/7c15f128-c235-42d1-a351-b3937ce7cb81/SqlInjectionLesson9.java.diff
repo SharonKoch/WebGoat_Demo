@@ -63,20 +63,21 @@
  
      protected AttackResult injectableQueryIntegrity(String name, String auth_tan) {
          StringBuffer output = new StringBuffer();
-@@ -61,1 +62,1 @@
+@@ -61,6 +62,8 @@
 -        String query = "SELECT * FROM employees WHERE last_name = '" + name + "' AND auth_tan = '" + auth_tan + "'";
-+        String query = "SELECT * FROM employees WHERE last_name = ? AND auth_tan = ?";
-         try (Connection connection = dataSource.getConnection()) {
-             try {
-@@ -64,1 +65,3 @@
+-        try (Connection connection = dataSource.getConnection()) {
+-            try {
 -                Statement statement = connection.createStatement(TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
-+                PreparedStatement preparedStatement = connection.prepareStatement(query, TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
-+                preparedStatement.setString(1, name);
-+                preparedStatement.setString(2, auth_tan);
-                 SqlInjectionLesson8.log(connection, query);
-@@ -66,1 +69,1 @@
+-                SqlInjectionLesson8.log(connection, query);
 -                ResultSet results = statement.executeQuery(query);
-+                ResultSet results = preparedStatement.executeQuery();
++    String query = "SELECT * FROM employees WHERE last_name = ? AND auth_tan = ?";
++    try (Connection connection = dataSource.getConnection()) {
++        try {
++            PreparedStatement preparedStatement = connection.prepareStatement(query, TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE);
++            preparedStatement.setString(1, name);
++            preparedStatement.setString(2, auth_tan);
++            SqlInjectionLesson8.log(connection, query);
++            ResultSet results = preparedStatement.executeQuery();
                  var test = results.getRow() != 0;
                  if (results.getStatement() != null) {
                      if (results.first()) {
