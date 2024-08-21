@@ -63,14 +63,13 @@
      }
  
      protected AttackResult injectableQuery(String query) {
-@@ -61,0 +62,1 @@
-+        String sql = "UPDATE employees SET phone = ? WHERE condition"; // Adjust the SQL query as needed
          try (Connection connection = dataSource.getConnection()) {
-@@ -62,2 +64,3 @@
+@@ -62,2 +63,4 @@
 -            try (Statement statement = connection.createStatement(TYPE_SCROLL_INSENSITIVE, CONCUR_READ_ONLY)) {
 -                statement.executeUpdate(query);
++            String sql = "UPDATE employees SET phone = ? WHERE condition"; // Adjust the SQL query as needed
 +            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-+                preparedStatement.setString(1, query); // Set the parameter value
++                preparedStatement.setString(1, query);
 +                preparedStatement.executeUpdate();
                  connection.commit();
 @@ -65,1 +68,1 @@
@@ -91,6 +90,8 @@
              return failed(this).output(this.getClass().getName() + " : " + e.getMessage()).build();
          }
      }
-@@ -81,0 +84,1 @@
+@@ -81,0 +84,3 @@
++            return failed(this).output(this.getClass().getName() + " : " + e.getMessage()).build();
++        }
 +    }
  }
