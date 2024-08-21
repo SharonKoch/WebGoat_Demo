@@ -3,8 +3,7 @@
 @@ -0,0 +0,0 @@
  package org.owasp.webgoat.lessons.path_traversal;
  
-@@ -3,0 +3,2 @@
-+import java.nio.file.Path;
+@@ -3,0 +3,1 @@
 +import java.nio.file.Paths;
  import lombok.SneakyThrows;
  import org.owasp.webgoat.container.assignments.AssignmentHints;
@@ -63,14 +62,15 @@
              Enumeration<? extends ZipEntry> entries = zip.entries();
              while (entries.hasMoreElements()) {
                  ZipEntry e = entries.nextElement();
-                 File f = new File(tmpZipDirectory.toFile(), e.getName());
-                 InputStream is = zip.getInputStream(e);
-@@ -62,0 +64,5 @@
-+                  Path normalizedPath = f.toPath().normalize();
-+                  if (!normalizedPath.startsWith(tmpZipDirectory)) {
-+                      throw new IOException("Error: Attempt to copy file outside of the target directory.");
+@@ -60,1 +61,6 @@
+-                File f = new File(tmpZipDirectory.toFile(), e.getName());
++                  File f = new File(tmpZipDirectory.toFile(), e.getName());
++                  String normalizedPath = f.getCanonicalPath();
++                  if (!normalizedPath.startsWith(tmpZipDirectory.toFile().getCanonicalPath())) {
++                      throw new IOException("Error: Attempt to write file outside of the target directory.");
 +                  }
 +
+                 InputStream is = zip.getInputStream(e);
                  Files.copy(is, f.toPath(), StandardCopyOption.REPLACE_EXISTING);
              }
  
